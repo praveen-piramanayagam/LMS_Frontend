@@ -1,12 +1,43 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Homepage from './pages/Homepage';
+import Registerpage from './pages/Registerpage';
+import Loginpage from './pages/Loginpage';
+import StudentRegisterForm from './pages/StudentRegisterForm';
+import TutorRegisterForm from './pages/TutorRegisterForm';
+import AdminRegisterForm from './pages/AdminRegisterForm';
+import StudentLoginForm from './pages/StudentLoginForm';
+import TutorLoginForm from './pages/TutorLoginForm';
+import AdminLoginForm from './pages/AdminLoginForm';
+import StudentDashboard from './pages/StudentDashboard';
+import TutorDashboard from './pages/TutorDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 
 const App = () => {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-    </div>
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/register" element={<Registerpage />} />
+        <Route path="/login" element={<Loginpage />} />
+        <Route path="/registerstudent" element={<StudentRegisterForm />} />
+        <Route path="/registertutor" element={<TutorRegisterForm />} />
+        <Route path="/registeradmin" element={<AdminRegisterForm />} />
+        <Route path="/loginstudent" element={<StudentLoginForm />} />
+        <Route path="/logintutor" element={<TutorLoginForm />} />
+        <Route path="/loginadmin" element={<AdminLoginForm />} />
+        <Route path="/studentdashboard" element={<StudentDashboard />} />
+        <Route path="/tutordashboard" element={<TutorDashboard />} />
+        <Route path="/admindashboard" element={<AdminDashboard />} />
+
+
+
+
+
+      </Routes>
+    </BrowserRouter>
   );
 };
 
