@@ -12,33 +12,32 @@ const TutorLoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-     // Validate input fields
-     if (!email || !password) {
+    // Validate input fields
+    if (!email || !password) {
         setError('Please enter both email and password.');
         setSuccessMessage('');
         return;
-      }
+    }
 
     try {
-      const response = await axios.post('https://lms-backend-ufn7.onrender.com/api/v1/auth/tutors/login', {
-        email,
-        password,
-      });
+        const response = await axios.post('https://lms-backend-ufn7.onrender.com/api/v1/auth/tutors/login', {
+            email,
+            password,
+        });
 
-      const { token } = response.data;
+        const token = response.data.token;
+        sessionStorage.setItem('sessionToken', token); // Store token in sessionStorage
+        setSuccessMessage('Login successful!');
+        setError('');
 
-      // Save token in localStorage
-      localStorage.setItem('token', token);
-      setSuccessMessage('Login successful!');
-      setError('');
-
-      setTimeout(() => {
-        navigate('/tutordashboard');
-      }, 2000);
+        setTimeout(() => {
+            navigate('/tutordashboard');
+        }, 2000);
     } catch (err) {
-      setError('Invalid email or password. Please try again.');
+        setError('Invalid email or password. Please try again.');
     }
-  };
+};
+
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-50 px-4 sm:px-6 lg:px-8">

@@ -13,13 +13,15 @@ import AdminLoginForm from './pages/AdminLoginForm';
 import StudentDashboard from './pages/StudentDashboard';
 import TutorDashboard from './pages/TutorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import TutorsLesson from './pages/TutorsLesson';
+import CreateLessonForm from './components/CreateLessonForm';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Homepage />} />
+        <Route path="/" element={<Loginpage />} />
         <Route path="/register" element={<Registerpage />} />
         <Route path="/login" element={<Loginpage />} />
         <Route path="/registerstudent" element={<StudentRegisterForm />} />
@@ -31,12 +33,10 @@ const App = () => {
         <Route path="/studentdashboard" element={<StudentDashboard />} />
         <Route path="/tutordashboard" element={<TutorDashboard />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/tutors/lessons/:tutorId" element={<TutorsLesson />} />
+        {/* <Route path="/tutors/createlessons" element={<CreateLessonForm />} /> */}
 
-
-
-
-
-      </Routes>
+        </Routes>
     </BrowserRouter>
   );
 };

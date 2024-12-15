@@ -19,7 +19,6 @@ const StudentLoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate input fields
     if (!formData.email || !formData.password) {
       setError('Please enter both email and password.');
       setSuccessMessage('');
@@ -32,19 +31,14 @@ const StudentLoginForm = () => {
         formData
       );
 
-      // Get the JWT token from the response
-      const token = response.data.token; // Assuming the token is in `response.data.token`
-
-      // Store the token in localStorage or sessionStorage
-      localStorage.setItem('token', token); // Store token in localStorage
-
+      const token = response.data.token;
+      sessionStorage.setItem('token', token); // Store token in sessionStorage
       setSuccessMessage('Login successful!');
       setError('');
 
       setTimeout(() => {
         navigate('/studentdashboard');
       }, 2000);
-      
     } catch (err) {
       console.error('Error logging in:', err.response);
       setError(err.response?.data?.error || 'Login failed. Please try again.');
@@ -65,7 +59,6 @@ const StudentLoginForm = () => {
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         {successMessage && <p className="text-green-500 text-sm mb-4">{successMessage}</p>}
 
-        {/* Email Input */}
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">Email</label>
           <input
@@ -78,7 +71,6 @@ const StudentLoginForm = () => {
           />
         </div>
 
-        {/* Password Input */}
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">Password</label>
           <input
@@ -91,7 +83,6 @@ const StudentLoginForm = () => {
           />
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
