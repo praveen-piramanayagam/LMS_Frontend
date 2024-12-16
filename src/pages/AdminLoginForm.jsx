@@ -21,7 +21,7 @@ const AdminLoginForm = () => {
       const { token } = response.data;
 
       // Save token in localStorage
-      localStorage.setItem('token', token);
+      sessionStorage.setItem('token', token);
 
       // Navigate to admin dashboard or homepage after successful login
       navigate('/admindashboard');

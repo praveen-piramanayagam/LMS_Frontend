@@ -20,13 +20,20 @@ const TutorLoginForm = () => {
     }
 
     try {
-        const response = await axios.post('https://lms-backend-ufn7.onrender.com/api/v1/auth/tutors/login', {
+        const response = await axios.post('http://localhost:3001/api/v1/auth/tutors/login', {
             email,
             password,
         });
+        
 
         const token = response.data.token;
+        
         sessionStorage.setItem('sessionToken', token); // Store token in sessionStorage
+        if (!response.data.isActive) {
+          setError('Your account is inactive. Please contact support.');
+          sessionStorage.removeItem('sessionToken'); // Remove token
+          return;
+      }
         setSuccessMessage('Login successful!');
         setError('');
 

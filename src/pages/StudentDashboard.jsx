@@ -11,6 +11,8 @@ const StudentDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableProfile, setEditableProfile] = useState({});
   const [successMessage, setSuccessMessage] = useState(''); // Success message after update
+  const [orders, setOrders] = useState([]); // Tutor's orders
+    const [orderModalVisible, setOrderModalVisible] = useState(false); // Order modal visibility
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
@@ -31,10 +33,14 @@ const StudentDashboard = () => {
         setError('Student ID not found in the token');
         setLoading(false);
       }
+      
     } catch (error) {
       console.error('Error decoding token:', error);
       navigate('/login');
     }
+
+
+
   }, [navigate]);
 
   const decodeJWT = (token) => {
@@ -54,7 +60,7 @@ const StudentDashboard = () => {
   const fetchStudentProfile = async (studentId) => {
     setLoading(true);
     try {
-      const response = await fetch(`https://lms-backend-ufn7.onrender.com/api/v1/profile/getstudent/${studentId}`);
+      const response = await fetch(`http://localhost:3001/api/v1/profile/getstudent/${studentId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch student profile');
       }
@@ -115,13 +121,106 @@ const StudentDashboard = () => {
     }
   };
 
+  const fetchOrders = async () => {
+    
+    try {
+      const token = sessionStorage.getItem('token');
+      const studentId = student.studentId; // Use student data from state
+  
+      if (!studentId) {
+        setError('Student ID not found.');
+        return;
+      }
+      const response = await fetch(
+        `http://localhost:3001/api/v1/order/studentsorderdetails/${studentId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch orders.');
+      }
+  
+      const data = await response.json();
+      setOrders(data.orders || []); // Update orders state
+    } catch (err) {
+      console.error('Failed to fetch orders', err);
+      setError('Failed to load orders.');
+    }
+  };
+
+  const handleOrdersClick = () => {
+    fetchOrders();
+    setOrderModalVisible(true);
+  };
+
+  const closeOrderModal = () => {
+    setOrderModalVisible(false);
+    window.location.reload();
+  };
+  // Format scheduledClass to display only date and day
+  // Function to format the scheduledClass to "Day, Date" format
+const formatScheduledClass = (dateString) => {
+  const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', options);
+};
+
+
+
   return (
-    <div className="relative min-h-screen bg-gradient-to-r from-blue-100 to-blue-300">
+    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 to-blue-200">
       <NavHome />
 
-      {/* Content below the Navbar */}
-      <div className="container mx-auto p-8 mt-[60px]"> {/* Added mt-20 to add space for the navbar */}
-        <h1 className="text-4xl font-semibold text-center text-gray-800 mb-8">Welcome to Your Dashboard</h1>
+      {/* Main Container */}
+      <div className="container mx-auto p-8 mt-[4rem]">
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Student Dashboard</h1>
+
+        {orderModalVisible && (
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] md:w-[99%]">
+              <h2 className="text-2xl font-semibold mb-4">Purchased Lessons</h2>
+              {orders.length === 0 ? (
+                <p className="text-gray-600">No orders found for this student.</p>
+              ) : (
+                <table className="table-auto w-full text-left border-collapse border border-gray-300">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="border border-gray-300 px-4 py-2">Order ID</th>
+                      <th className="border border-gray-300 px-4 py-2">Title</th>
+                      <th className="border border-gray-300 px-4 py-2">Amount</th>
+                      <th className="border border-gray-300 px-4 py-2">Meeting Link</th>
+                      <th className="border border-gray-300 px-4 py-2">Scheduled Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map((order) => (
+                      <tr key={order.order_id} className="hover:bg-gray-50">
+                        <td className="border border-gray-300 px-4 py-2">{order.order_id}</td>
+                        <td className="border border-gray-300 px-4 py-2">{order.title}</td>
+                        <td className="border border-gray-300 px-4 py-2">₹{order.amount}</td>
+                        <td className="border border-gray-300 px-4 py-2">{order.meetingLink}</td>
+                        <td className="border border-gray-300 px-4 py-2">{formatScheduledClass(order.scheduledClass)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={closeOrderModal}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="text-center text-xl text-gray-600">Loading your profile...</div>
@@ -129,45 +228,45 @@ const StudentDashboard = () => {
           <div className="text-center text-red-500">{error}</div>
         ) : student ? (
           <div className="flex justify-center items-center">
-            <div className="bg-white rounded-lg shadow-xl p-4 w-[65rem] max-w-[65rem]">
+            <div className="bg-white rounded-lg shadow-md p-6 w-full md:w-[65rem]">
               {successMessage && (
-                <div className="text-green-500 text-lg font-semibold">{successMessage}</div>
+                <div className="text-green-500 text-lg font-semibold mb-4">{successMessage}</div>
               )}
 
               <div className="space-y-6">
                 {isEditing ? (
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="name" className="block text-gray-600">Name:</label>
+                      <label htmlFor="name" className="block text-gray-700 font-medium">Name</label>
                       <input
                         type="text"
                         id="name"
                         name="name"
                         value={editableProfile.name || ''}
                         onChange={handleProfileChange}
-                        className="border-2 border-gray-300 p-3 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 p-3 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-gray-600">Email:</label>
+                      <label htmlFor="email" className="block text-gray-700 font-medium">Email</label>
                       <input
                         type="email"
                         id="email"
                         name="email"
                         value={editableProfile.email || ''}
                         onChange={handleProfileChange}
-                        className="border-2 border-gray-300 p-3 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 p-3 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
-                      <label htmlFor="studentId" className="block text-gray-600">Student ID:</label>
+                      <label htmlFor="studentId" className="block text-gray-700 font-medium">Student ID</label>
                       <input
                         type="text"
                         id="studentId"
                         name="studentId"
                         value={editableProfile.studentId || ''}
                         onChange={handleProfileChange}
-                        className="border-2 border-gray-300 p-3 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="border border-gray-300 p-3 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         readOnly
                       />
                     </div>
@@ -179,16 +278,18 @@ const StudentDashboard = () => {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex space-x-8">
-                    <p><strong>Name:</strong> {student.name || 'N/A'}</p>
-                    <p><strong>Email:</strong> {student.email || 'N/A'}</p>
-                    <p><strong>Student ID:</strong> {student.studentId || 'N/A'}</p>
-                    <button
-                      onClick={handleEditClick}
-                      className="bg-yellow-500 text-white font-semibold rounded-lg px-4 py-2 hover:bg-yellow-600 transition duration-300"
-                    >
-                      Edit Profile
-                    </button>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-lg font-medium text-gray-700"><strong>Name:</strong> {student.name || 'N/A'}</p>
+                      <button
+                        onClick={handleEditClick}
+                        className="bg-yellow-500 text-white font-semibold rounded-lg px-4 py-2 hover:bg-yellow-600 transition duration-300"
+                      >
+                        Edit Profile
+                      </button>
+                    </div>
+                    <p className="text-lg font-medium text-gray-700"><strong>Email:</strong> {student.email || 'N/A'}</p>
+                    <p className="text-lg font-medium text-gray-700"><strong>Student ID:</strong> {student.studentId || 'N/A'}</p>
                   </div>
                 )}
               </div>
@@ -198,18 +299,23 @@ const StudentDashboard = () => {
           <div className="text-center text-red-500">Unable to load profile. Please log in again.</div>
         )}
       </div>
-      <TutorFilter/>
 
-
-      {/* Logout Button at Bottom Right Corner with Fixed Width */}
-      <div className="absolute bottom-4 right-4 flex w-auto justify-center">
+      <div className="fixed bottom-6 right-6 flex flex-col items-end space-y-4">
+        <button
+          onClick={handleOrdersClick}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+        >
+          View Purchased Lessons
+        </button>
         <button
           onClick={handleLogout}
-          className="w-[80px] h-[50px] bg-red-600 text-white shadow-md hover:bg-red-700 transition duration-300"
+          className="w-[120px] py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-300"
         >
           Logout
         </button>
       </div>
+
+      <TutorFilter />
     </div>
   );
 };

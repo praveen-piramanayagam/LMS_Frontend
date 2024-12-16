@@ -27,12 +27,26 @@ const StudentLoginForm = () => {
 
     try {
       const response = await axios.post(
-        'https://lms-backend-ufn7.onrender.com/api/v1/auth/students/login',
+        'http://localhost:3001/api/v1/auth/students/login',
         formData
       );
 
       const token = response.data.token;
+      if (!token) {
+        setError('No token received.');
+        setSuccessMessage('');
+        return;
+      }
+
       sessionStorage.setItem('token', token); // Store token in sessionStorage
+
+      if (!response.data.isActive) {
+        setError('Your account is inactive. Please contact support.');
+        sessionStorage.removeItem('token'); // Remove token if account is inactive
+        setSuccessMessage('');
+        return;
+      }
+
       setSuccessMessage('Login successful!');
       setError('');
 
@@ -45,6 +59,8 @@ const StudentLoginForm = () => {
       setSuccessMessage('');
     }
   };
+
+
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-50 px-4 sm:px-6 lg:px-8">
@@ -91,6 +107,7 @@ const StudentLoginForm = () => {
         </button>
       </form>
     </div>
+
   );
 };
 
