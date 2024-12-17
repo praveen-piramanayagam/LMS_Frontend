@@ -26,6 +26,30 @@ const TutorDashboard = () => {
     });
     const navigate = useNavigate();
 
+    // Decode JWT function
+    const decodeJWT = (token) => {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(
+                atob(base64)
+                    .split('')
+                    .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join('')
+            );
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            console.error('Error decoding JWT:', error);
+            return null;
+        }
+    };
+
+    // Check token expiration
+    const isTokenExpired = (decodedToken) => {
+        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+        return decodedToken.exp < currentTime; // Compare expiration time
+    };
+
     useEffect(() => {
         const token = sessionStorage.getItem('sessionToken'); // Retrieve the token using the correct key
         console.log('Token retrieved from sessionStorage:', token);
@@ -57,50 +81,11 @@ const TutorDashboard = () => {
 
     }, [navigate]);
 
-    // Decode JWT function
-    const decodeJWT = (token) => {
-        try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(
-                atob(base64)
-                    .split('')
-                    .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                    .join('')
-            );
-            return JSON.parse(jsonPayload);
-        } catch (error) {
-            console.error('Error decoding JWT:', error);
-            return null;
-        }
-    };
-
-    // Check token expiration
-    const isTokenExpired = (decodedToken) => {
-        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-        return decodedToken.exp < currentTime; // Compare expiration time
-    };
+    
 
     // Fetch lessons created by the tutor
     const fetchLessons = async (tutorId, token) => {
-        // setLoading(true);
-        // try {
-        //     const response = await axios.get(
-        //         `https://lms-backend-ufn7.onrender.com/api/v1/lessons/getcreatedlessons/${tutorId}`,
-        //         {
-        //             headers: {
-        //                 Authorization: `Bearer ${token}`,
-        //             },
-        //         }
-        //     );
-        //     console.log('Fetched lessons:', response.data); // Debug the lesson data
-        //     setLessons(response.data);
-        //     setLoading(false);
-        // } catch (error) {
-        //     console.error("API Error:", error.response ? error.response.data : error.message);
-        //     setError("Failed to fetch lessons. Please try again later.");
-        //     setLoading(false);
-        // }
+      
         try {
                 const response = await axios.get(
                     `https://lms-backend-ufn7.onrender.com/api/v1/lessons/getcreatedlessons/${tutorId}`,
@@ -213,15 +198,7 @@ const TutorDashboard = () => {
         }
 
         const token = sessionStorage.getItem('sessionToken');
-        //     const dateRegex = /^\d{2}-\d{2}-\d{4}$/; // Regex for DD-MM-YYYY format
-        // if (!dateRegex.test(newLesson.scheduledClass)) {
-        //     alert("Invalid date format! Please use DD-MM-YYYY.");
-        //     return;
-        // }
-
-        // // Reformat date from DD-MM-YYYY to DD/MM/YYYY for the backend
-        // const [day, month, year] = newLesson.scheduledClass.split('-');
-        // const formattedDate = `${day}/${month}/${year}`;
+      
 
         if (!token) {
             console.error('No token found');
@@ -358,49 +335,46 @@ const TutorDashboard = () => {
 
     //order
     const fetchOrders = async (tutorId, token) => {
-        // try {
-        //     //   const token = sessionStorage.getItem("jwtToken");
-        //     const response = await axios.get(
-        //         `http://localhost:3001/api/v1/order/tutororderdetails/${tutorId}`,
-        //         {},
-        //         {
-        //             headers: {
-        //                 Authorization: `Bearer ${token}`,
-        //             },
-        //         }
-        //     );
-        //     setOrders(response.data.orders || []);
-        // } catch (err) {
-        //     console.error("Failed to fetch orders", err);
-        //     setError("Failed to load orders.");
-        // }
         try {
+            console.log("Fetching orders for tutorId:", tutorId);
             const response = await axios.get(
-                `https://lms-backend-ufn7.onrender.com/api/v1/order/tutororderdetails/${tutorId}`,
-                {},
+                `http://localhost:3001/api/v1/order/tutororderdetails/${tutorId}`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            // setOrders(response.data.orders || []);
-
-            if (response.data && response.data.length > 0) {
-                setOrders(response.data); // Assuming you have a state like `orders`
+    
+            console.log("API Response:", response.data); // Check if response.data contains 'orders'
+            
+            if (response.data && response.data.orders) {
+                setOrders(response.data.orders);
+                console.log("Orders set in state:", response.data.orders); // Verify orders are set
             } else {
-                setOrders([]); // Set an empty array to avoid issues in rendering
+                console.log("No orders found in response");
+                setOrders([]); // Empty array fallback
             }
         } catch (error) {
             console.error("Failed to fetch orders:", error);
-            setOrders([]); // Handle error by showing empty data
+            setOrders([]); // Handle errors gracefully
         }
     };
+    
 
+    // const handleOrdersClick = () => {
+    //     fetchOrders();
+    //     setOrderModalVisible(true);
+    // };
     const handleOrdersClick = () => {
-        fetchOrders();
-        setOrderModalVisible(true);
+        const token = sessionStorage.getItem('sessionToken');
+        const decoded = decodeJWT(token);
+        if (decoded?.tutorId) {
+            fetchOrders(decoded.tutorId, token);
+            setOrderModalVisible(true);
+        } else {
+            console.error("Unable to fetch orders: tutorId is missing");
+        }
     };
+    
 
     const closeOrderModal = () => {
         setOrderModalVisible(false);
