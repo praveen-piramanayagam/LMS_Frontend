@@ -368,7 +368,14 @@ const TutorDashboard = () => {
         window.location.reload();
     };
     const totalEarned = orders.reduce((sum, order) => sum + order.amount, 0);
-
+    const formatScheduledClass = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
+        const year = date.getFullYear();
+      
+        return `${day}-${month}-${year}`;
+      };
 
 
     return (
@@ -381,7 +388,7 @@ const TutorDashboard = () => {
                 <div className="flex gap-4">
                     <button
                         onClick={handleCreateLesson}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
                     >
                         Create Lesson
                     </button>
@@ -476,7 +483,7 @@ const TutorDashboard = () => {
                                 </p>
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300"
+                                    className="bg-yellow-400 text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition duration-300 mt-[1rem]"
                                 >
                                     Edit Profile
                                 </button>
@@ -496,11 +503,11 @@ const TutorDashboard = () => {
                 <div className="text-center text-red-500">{error}</div>
             ) : (
                 <div>
-                    <h2 className="text-2xl font-semibold mb-4">Lessons Created by You</h2>
+                    <h2 className="text-2xl font-semibold mb-2 mt-5">Lessons Created by You</h2>
                     {lessons.length === 0 ? (
                         <p className="text-gray-700">You have not created any lessons yet.</p>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-[5rem]">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-[rem]">
                             {lessons.map((lesson) => (
                                 <div key={lesson.lesson_id} className="bg-white p-4 rounded-lg shadow">
                                     <h3 className="text-lg font-semibold">{lesson.title}</h3>
@@ -508,11 +515,12 @@ const TutorDashboard = () => {
                                     <p className="text-gray-600">Subject: {lesson.subject}</p>
                                     <p className="text-gray-600">Duration: {lesson.duration} minutes</p>
                                     <p className="text-gray-600">Price: ₹{lesson.price}</p>
-                                    <p className="text-gray-600">ScheduledClass at: {lesson.scheduledClass}</p>
+                                    <p className="text-gray-600">Meeting url: {lesson.meetingLink}</p>
+                                    <p className="text-gray-600">ScheduledClass at: {formatScheduledClass(lesson.scheduledClass)}</p>
                                     <div className="flex gap-2 mt-4">
                                         <button
                                             onClick={() => handleUpdateLesson(lesson)}
-                                            className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                                            className="bg-yellow-400 text-white px-4 py-2 rounded-lg hover:bg-yellow-500"
                                         >
                                             Update
                                         </button>
