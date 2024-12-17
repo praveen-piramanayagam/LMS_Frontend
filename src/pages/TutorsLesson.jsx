@@ -66,7 +66,7 @@ const TutorLessons = () => {
     
             // Step 2: Open Razorpay checkout with the created order_id
             const options = {
-                key: "rzp_test_9qlbqULX5I6dyn", // Replace with your Razorpay key ID
+                key: "rzp_test_9qlbqULX5I6dyn",
                 amount: amount * 100, // Amount in paisa (100 paisa = 1 INR)
                 currency: "INR",
                 order_id: order_id, // Razorpay order ID from the backend
