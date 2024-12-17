@@ -338,7 +338,7 @@ const TutorDashboard = () => {
         try {
             console.log("Fetching orders for tutorId:", tutorId);
             const response = await axios.get(
-                `http://localhost:3001/api/v1/order/tutororderdetails/${tutorId}`,
+                `https://lms-backend-ufn7.onrender.com/api/v1/order/tutororderdetails/${tutorId}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
