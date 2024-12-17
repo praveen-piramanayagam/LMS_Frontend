@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavHome from '../components/NavHome';
 import TutorFilter from '../components/TutorFilter';
+import Navbar from '../components/Navbar';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -114,7 +115,8 @@ const StudentDashboard = () => {
       setStudent(updatedProfile);
       setEditableProfile(updatedProfile); // Ensure editableProfile is also updated with the latest data
       setSuccessMessage('Profile updated successfully!');
-      setTimeout(() => setSuccessMessage(''), 5000);
+      setTimeout(() => setSuccessMessage(''), 1000);
+      window.location.reload();
     } catch (error) {
       console.error('Error saving profile:', error);
       setError('Failed to save profile');
@@ -174,8 +176,7 @@ const formatScheduledClass = (dateString) => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-blue-50 to-blue-200">
-      <NavHome />
-
+      <Navbar />
       {/* Main Container */}
       <div className="container mx-auto p-8 mt-[4rem]">
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Student Dashboard</h1>
@@ -183,7 +184,7 @@ const formatScheduledClass = (dateString) => {
         {orderModalVisible && (
           <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] md:w-[99%]">
-              <h2 className="text-2xl font-semibold mb-4">Purchased Lessons</h2>
+              <h2 className="text-2xl font-semibold mb-4">Purchased Lessons <b>NOTE : Class timing will be 10AM-1PM </b></h2>
               {orders.length === 0 ? (
                 <p className="text-gray-600">No orders found for this student.</p>
               ) : (

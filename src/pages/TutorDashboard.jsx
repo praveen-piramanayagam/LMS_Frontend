@@ -16,7 +16,7 @@ const TutorDashboard = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [lessonToUpdate, setLessonToUpdate] = useState(null);
     const [orders, setOrders] = useState([]); // Tutor's orders
-  const [orderModalVisible, setOrderModalVisible] = useState(false); // Order modal visibility
+    const [orderModalVisible, setOrderModalVisible] = useState(false); // Order modal visibility
     const [newLesson, setNewLesson] = useState({
         title: '',
         description: '',
@@ -125,6 +125,16 @@ const TutorDashboard = () => {
     const handleSaveLesson = async () => {
         const token = sessionStorage.getItem('sessionToken');
         const decoded = decodeJWT(token);
+        const dateRegex = /^\d{2}-\d{2}-\d{4}$/; // Regex for DD-MM-YYYY format
+    if (!dateRegex.test(newLesson.scheduledClass)) {
+        alert("Invalid date format! Please use DD-MM-YYYY.");
+        return;
+    }
+
+    // Reformat date from DD-MM-YYYY to DD/MM/YYYY for the backend
+    const [day, month, year] = newLesson.scheduledClass.split('-');
+    const formattedDate = `${day}/${month}/${year}`;
+
 
         try {
             await axios.post(
@@ -136,6 +146,8 @@ const TutorDashboard = () => {
                     subject: newLesson.subject,
                     duration: newLesson.duration,
                     price: newLesson.price,
+                    scheduledClass: formattedDate,
+
                 },
                 {
                     headers: {
@@ -183,6 +195,16 @@ const TutorDashboard = () => {
         }
 
         const token = sessionStorage.getItem('sessionToken');
+    //     const dateRegex = /^\d{2}-\d{2}-\d{4}$/; // Regex for DD-MM-YYYY format
+    // if (!dateRegex.test(newLesson.scheduledClass)) {
+    //     alert("Invalid date format! Please use DD-MM-YYYY.");
+    //     return;
+    // }
+
+    // // Reformat date from DD-MM-YYYY to DD/MM/YYYY for the backend
+    // const [day, month, year] = newLesson.scheduledClass.split('-');
+    // const formattedDate = `${day}/${month}/${year}`;
+
         if (!token) {
             console.error('No token found');
             return;
@@ -198,7 +220,8 @@ const TutorDashboard = () => {
                     description: lessonToUpdate.description,
                     subject: lessonToUpdate.subject,
                     duration: lessonToUpdate.duration,
-                    price: lessonToUpdate.price
+                    price: lessonToUpdate.price,
+                    // scheduledClass: formattedDate,
                 },
                 {
                     headers: {
@@ -307,7 +330,8 @@ const TutorDashboard = () => {
             setTutor(response.data); // Update tutor state with new data
             setIsEditing(false);
             setSuccessMessage("Profile updated successfully!");
-            setTimeout(() => setSuccessMessage(""), 5000); // Clear success message after 5 seconds
+            setTimeout(() => setSuccessMessage(""), 2000); // Clear success message after 5 seconds
+            window.location.reload();
         } catch (error) {
             console.error("Error saving tutor profile:", error);
             setErrorMessage("Failed to save profile. Please try again.");
@@ -317,32 +341,34 @@ const TutorDashboard = () => {
     //order
     const fetchOrders = async (tutorId, token) => {
         try {
-        //   const token = sessionStorage.getItem("jwtToken");
-          const response = await axios.get(
-            `http://localhost:3001/api/v1/order/tutororderdetails/${tutorId}`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setOrders(response.data.orders || []);
+            //   const token = sessionStorage.getItem("jwtToken");
+            const response = await axios.get(
+                `http://localhost:3001/api/v1/order/tutororderdetails/${tutorId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setOrders(response.data.orders || []);
         } catch (err) {
-          console.error("Failed to fetch orders", err);
-          setError("Failed to load orders.");
+            console.error("Failed to fetch orders", err);
+            setError("Failed to load orders.");
         }
-      };
-    
-      const handleOrdersClick = () => {
+    };
+
+    const handleOrdersClick = () => {
         fetchOrders();
         setOrderModalVisible(true);
-      };
-    
-      const closeOrderModal = () => {
+    };
+
+    const closeOrderModal = () => {
         setOrderModalVisible(false);
         window.location.reload();
-      };
+    };
+    const totalEarned = orders.reduce((sum, order) => sum + order.amount, 0);
+
 
 
     return (
@@ -369,98 +395,98 @@ const TutorDashboard = () => {
                         className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300"
                     >
                         Solded lessons
-                        </button>
+                    </button>
                 </div>
             </div>
             {/* Profile Section */}
             <div className="mt-[6rem] bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-semibold mb-4">Your Profile</h2>
-            {loading ? (
-                <div className="text-gray-600">Loading profile...</div>
-            ) : error ? (
-                <div className="text-red-500">{error}</div>
-            ) : tutor ? (
-                <>
-                    <div>
-                        {successMessage && (
-                            <div className="text-green-500 mb-4">{successMessage}</div>
-                        )}
-                        {errorMessage && (
-                            <div className="text-red-500 mb-4">{errorMessage}</div>
-                        )}
-                    </div>
-                    {isEditing ? (
-                        <div className="space-y-4">
-                            <div>
-                                <label htmlFor="name" className="block text-gray-600">
-                                    Name:
-                                </label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={editableTutor.name || ""}
-                                    onChange={handleProfileChange}
-                                    className="border rounded p-2 w-full"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="email" className="block text-gray-600">
-                                    Email:
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={editableTutor.email || ""}
-                                    onChange={handleProfileChange}
-                                    className="border rounded p-2 w-full"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="_id" className="block text-gray-600">
-                                    Tutor ID:
-                                </label>
-                                <input
-                                    type="text"
-                                    id="tutorId" // Use _id here
-                                    name="tutorId"
-                                    value={editableTutor.tutorId || ""}
-                                    readOnly
-                                    className="border rounded p-2 w-full bg-gray-200"
-                                />
-                            </div>
-                            <button
-                                onClick={handleSaveProfile}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-                            >
-                                Save Profile
-                            </button>
-                        </div>
-                    ) : (
+                <h2 className="text-2xl font-semibold mb-4">Your Profile</h2>
+                {loading ? (
+                    <div className="text-gray-600">Loading profile...</div>
+                ) : error ? (
+                    <div className="text-red-500">{error}</div>
+                ) : tutor ? (
+                    <>
                         <div>
-                            <p>
-                                <strong>Name:</strong> {tutor?.name || "N/A"}
-                            </p>
-                            <p>
-                                <strong>Email:</strong> {tutor?.email || "N/A"}
-                            </p>
-                            <p>
-                                <strong>Tutor ID:</strong> {tutor?.tutorId || "N/A"} {/* Use _id */}
-                            </p>
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300"
-                            >
-                                Edit Profile
-                            </button>
+                            {successMessage && (
+                                <div className="text-green-500 mb-4">{successMessage}</div>
+                            )}
+                            {errorMessage && (
+                                <div className="text-red-500 mb-4">{errorMessage}</div>
+                            )}
                         </div>
-                    )}
-                </>
-            ) : (
-                <div className="text-red-500">Failed to load profile.</div>
-            )}
-        </div>
+                        {isEditing ? (
+                            <div className="space-y-4">
+                                <div>
+                                    <label htmlFor="name" className="block text-gray-600">
+                                        Name:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={editableTutor.name || ""}
+                                        onChange={handleProfileChange}
+                                        className="border rounded p-2 w-full"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="email" className="block text-gray-600">
+                                        Email:
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={editableTutor.email || ""}
+                                        onChange={handleProfileChange}
+                                        className="border rounded p-2 w-full"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="_id" className="block text-gray-600">
+                                        Tutor ID:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="tutorId" // Use _id here
+                                        name="tutorId"
+                                        value={editableTutor.tutorId || ""}
+                                        readOnly
+                                        className="border rounded p-2 w-full bg-gray-200"
+                                    />
+                                </div>
+                                <button
+                                    onClick={handleSaveProfile}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+                                >
+                                    Save Profile
+                                </button>
+                            </div>
+                        ) : (
+                            <div>
+                                <p>
+                                    <strong>Name:</strong> {tutor?.name || "N/A"}
+                                </p>
+                                <p>
+                                    <strong>Email:</strong> {tutor?.email || "N/A"}
+                                </p>
+                                <p>
+                                    <strong>Tutor ID:</strong> {tutor?.tutorId || "N/A"} {/* Use _id */}
+                                </p>
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300"
+                                >
+                                    Edit Profile
+                                </button>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="text-red-500">Failed to load profile.</div>
+                )}
+            </div>
 
 
 
@@ -482,7 +508,7 @@ const TutorDashboard = () => {
                                     <p className="text-gray-600">Subject: {lesson.subject}</p>
                                     <p className="text-gray-600">Duration: {lesson.duration} minutes</p>
                                     <p className="text-gray-600">Price: ₹{lesson.price}</p>
-                                    <p>Lesson ID: {lesson.lesson_id}</p>
+                                    <p className="text-gray-600">ScheduledClass at: {lesson.scheduledClass}</p>
                                     <div className="flex gap-2 mt-4">
                                         <button
                                             onClick={() => handleUpdateLesson(lesson)}
@@ -545,6 +571,14 @@ const TutorDashboard = () => {
                                 name="price"
                                 placeholder="Price (₹)"
                                 value={newLesson.price}
+                                onChange={handleInputChange}
+                                className="border rounded p-2"
+                            />
+                            <input
+                                type="text"
+                                name="scheduledClass"
+                                placeholder="DD-MM-YYYY"
+                                value={newLesson.scheduledClass}
                                 onChange={handleInputChange}
                                 className="border rounded p-2"
                             />
@@ -611,6 +645,14 @@ const TutorDashboard = () => {
                                 onChange={handleUpdateInputChange}
                                 className="border rounded p-2"
                             />
+                            {/* <input
+                                type="text"
+                                name="scheduledClass"
+                                placeholder="DD-MM-YYYY"
+                                value={lessonToUpdate?.scheduledClass || ""}
+                                onChange={handleUpdateInputChange}
+                                className="border rounded p-2"
+                            /> */}
                         </div>
                         <div className="flex justify-end gap-4 mt-4">
                             <button
@@ -630,57 +672,60 @@ const TutorDashboard = () => {
                 </div>
             )}
             {/* Orders Modal */}
-      {orderModalVisible && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] md:w-[50%]">
-            <h2 className="text-2xl font-semibold mb-4">Tutor Orders</h2>
-            {orders.length === 0 ? (
-              <p className="text-gray-700">No orders found for this tutor.</p>
-            ) : (
-              <table className="table-auto w-full border-collapse border border-gray-300">
-                <thead>
-                  <tr>
-                    <th className="border border-gray-300 px-4 py-2">Order ID</th>
-                    <th className="border border-gray-300 px-4 py-2">Title</th>
-                    <th className="border border-gray-300 px-4 py-2">Amount</th>
-                    <th className="border border-gray-300 px-4 py-2">Student Email</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order) => (
-                    <tr key={order.order_id}>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {order.order_id}
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {order.title}
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        ₹{order.amount}
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {order.student_email || "N/A"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={closeOrderModal}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )};
+            {orderModalVisible && (
+                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] md:w-[50%]">
+                        <h2 className="text-2xl font-semibold mb-4">Tutor Orders</h2>
+                        {orders.length === 0 ? (
+                            <p className="text-gray-700">No orders found for this tutor.</p>
+                        ) : (
+                            <table className="table-auto w-full border-collapse border border-gray-300">
+                                <thead>
+                                    <tr>
+                                        <th className="border border-gray-300 px-4 py-2">Order ID</th>
+                                        <th className="border border-gray-300 px-4 py-2">Title</th>
+                                        <th className="border border-gray-300 px-4 py-2">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.map((order) => (
+                                        <tr key={order.order_id}>
+                                            <td className="border border-gray-300 px-4 py-2">
+                                                {order.order_id}
+                                            </td>
+                                            <td className="border border-gray-300 px-4 py-2">
+                                                {order.title}
+                                            </td>
+                                            <td className="border border-gray-300 px-4 py-2">
+                                                ₹{order.amount}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+
+                        )}
+                        {/* Display Total Earned */}
+                        <div className="text-right mt-4">
+                            <p className="text-lg font-semibold">
+                                Total Earned: <span className="text-green-600">₹{totalEarned}</span>
+                            </p>
+                        </div>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={closeOrderModal}
+                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )};
 
 
         </div>
-        
+
 
     );
 };

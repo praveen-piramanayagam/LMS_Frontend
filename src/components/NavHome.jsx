@@ -23,7 +23,7 @@ const NavHome = () => {
               className="cursor-pointer text-lg font-semibold text-white"
               onClick={toggleProfileDropdown}
             >
-              Profile
+              Home
             </div>
 
             {/* Dropdown content */}

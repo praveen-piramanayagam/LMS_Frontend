@@ -118,39 +118,64 @@ const TutorLessons = () => {
     };
     
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-16">
-            {loading && <p className="text-center">Loading...</p>}
-            {error && <p className="text-red-500 text-center">{error}</p>}
-            {tutorDetails && (
-                <div>
-                    <h2 className="text-2xl font-semibold text-center">
-                        Lessons by {tutorDetails.name}
-                    </h2>
-                    <p className="text-center">{tutorDetails.email}</p>
-                </div>
-            )}
-            {lessons.length > 0 ? (
-                <ul>
-                    {lessons.map((lesson) => (
-                        <li key={lesson._id} className="border-b py-4">
-                            <h4 className="text-lg font-bold">{lesson.title}</h4>
-                            <p>{lesson.subject}</p>
-                            <p>{lesson.description}</p>
-                            <p>{lesson.duration} minutes</p>
-                            <p>{lesson.price} INR</p>
-                            <button
-                                onClick={() => handlePayNow(lesson.lesson_id)} // Use lesson.lesson_id here
-                                className="bg-blue-500 text-white py-2 px-4 rounded mt-2"
-                            >
-                                Pay Now
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                !loading && <p className="text-center">No lessons found</p>
-            )}
-        </div>
+        <div className="max-w-4xl mx-auto p-6 bg-gray-50 shadow-lg rounded-lg mt-[5rem]">
+            <div className='text-center text-3xl text-gray-600 pt-5 pb-5'>
+                You can purchase lesson here...Do check your inbox for confirmation and lesson will be added to your history...
+            </div>
+            <div className="mb-4">
+        <button
+            onClick={() => window.location.href = '/studentdashboard'} 
+            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded transition-colors"
+        >
+            ← Back to Dashboard
+        </button>
+    </div>
+        {loading && <p className="text-center">Loading...</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
+        {tutorDetails && (
+            <div className="mb-8">
+                <h2 className="text-3xl font-bold text-center text-gray-800">
+                    Lessons by {tutorDetails.name}
+                </h2>
+                <p className="text-center text-gray-600">{tutorDetails.email}</p>
+            </div>
+        )}
+        {lessons.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {lessons.map((lesson) => (
+                    <div
+                        key={lesson.lesson_id}
+                        className="bg-white shadow-md rounded-lg overflow-hidden p-6 transition-transform transform hover:scale-105"
+                    >
+                        <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                            {lesson.title}
+                        </h4>
+                        <p className="text-gray-700 mb-1">
+                            <span className="font-medium text-gray-900">Subject:</span> {lesson.subject}
+                        </p>
+                        <p className="text-gray-700 mb-1">
+                            <span className="font-medium text-gray-900">Description:</span> {lesson.description}
+                        </p>
+                        <p className="text-gray-700 mb-1">
+                            <span className="font-medium text-gray-900">Duration:</span> {lesson.duration} minutes
+                        </p>
+                        <p className="text-gray-700 mb-4">
+                            <span className="font-medium text-gray-900">Price:</span> {lesson.price} INR
+                        </p>
+                        <button
+                            onClick={() => handlePayNow(lesson.lesson_id)} // Use lesson.lesson_id here
+                            className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded transition-colors"
+                        >
+                            Pay Now
+                        </button>
+                    </div>
+                ))}
+            </div>
+        ) : (
+            !loading && <p className="text-center text-gray-600">No lessons found</p>
+        )}
+    </div>
+    
     );
 };
 
