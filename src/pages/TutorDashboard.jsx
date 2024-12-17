@@ -83,23 +83,41 @@ const TutorDashboard = () => {
 
     // Fetch lessons created by the tutor
     const fetchLessons = async (tutorId, token) => {
-        setLoading(true);
+        // setLoading(true);
+        // try {
+        //     const response = await axios.get(
+        //         `https://lms-backend-ufn7.onrender.com/api/v1/lessons/getcreatedlessons/${tutorId}`,
+        //         {
+        //             headers: {
+        //                 Authorization: `Bearer ${token}`,
+        //             },
+        //         }
+        //     );
+        //     console.log('Fetched lessons:', response.data); // Debug the lesson data
+        //     setLessons(response.data);
+        //     setLoading(false);
+        // } catch (error) {
+        //     console.error("API Error:", error.response ? error.response.data : error.message);
+        //     setError("Failed to fetch lessons. Please try again later.");
+        //     setLoading(false);
+        // }
         try {
-            const response = await axios.get(
-                `https://lms-backend-ufn7.onrender.com/api/v1/lessons/getcreatedlessons/${tutorId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            console.log('Fetched lessons:', response.data); // Debug the lesson data
-            setLessons(response.data);
-            setLoading(false);
+                const response = await axios.get(
+                    `https://lms-backend-ufn7.onrender.com/api/v1/lessons/getcreatedlessons/${tutorId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            if (response.data && response.data.length > 0) {
+                setLessons(response.data); // Assuming you have a state like `lessons`
+            } else {
+                setLessons([]); // Set empty lessons array
+            }
         } catch (error) {
-            console.error("API Error:", error.response ? error.response.data : error.message);
-            setError("Failed to fetch lessons. Please try again later.");
-            setLoading(false);
+            console.error("Failed to fetch lessons:", error);
+            setLessons([]); // Fallback to empty state
         }
     };
     // Logout function
@@ -126,14 +144,14 @@ const TutorDashboard = () => {
         const token = sessionStorage.getItem('sessionToken');
         const decoded = decodeJWT(token);
         const dateRegex = /^\d{2}-\d{2}-\d{4}$/; // Regex for DD-MM-YYYY format
-    if (!dateRegex.test(newLesson.scheduledClass)) {
-        alert("Invalid date format! Please use DD-MM-YYYY.");
-        return;
-    }
+        if (!dateRegex.test(newLesson.scheduledClass)) {
+            alert("Invalid date format! Please use DD-MM-YYYY.");
+            return;
+        }
 
-    // Reformat date from DD-MM-YYYY to DD/MM/YYYY for the backend
-    const [day, month, year] = newLesson.scheduledClass.split('-');
-    const formattedDate = `${day}/${month}/${year}`;
+        // Reformat date from DD-MM-YYYY to DD/MM/YYYY for the backend
+        const [day, month, year] = newLesson.scheduledClass.split('-');
+        const formattedDate = `${day}/${month}/${year}`;
 
 
         try {
@@ -195,15 +213,15 @@ const TutorDashboard = () => {
         }
 
         const token = sessionStorage.getItem('sessionToken');
-    //     const dateRegex = /^\d{2}-\d{2}-\d{4}$/; // Regex for DD-MM-YYYY format
-    // if (!dateRegex.test(newLesson.scheduledClass)) {
-    //     alert("Invalid date format! Please use DD-MM-YYYY.");
-    //     return;
-    // }
+        //     const dateRegex = /^\d{2}-\d{2}-\d{4}$/; // Regex for DD-MM-YYYY format
+        // if (!dateRegex.test(newLesson.scheduledClass)) {
+        //     alert("Invalid date format! Please use DD-MM-YYYY.");
+        //     return;
+        // }
 
-    // // Reformat date from DD-MM-YYYY to DD/MM/YYYY for the backend
-    // const [day, month, year] = newLesson.scheduledClass.split('-');
-    // const formattedDate = `${day}/${month}/${year}`;
+        // // Reformat date from DD-MM-YYYY to DD/MM/YYYY for the backend
+        // const [day, month, year] = newLesson.scheduledClass.split('-');
+        // const formattedDate = `${day}/${month}/${year}`;
 
         if (!token) {
             console.error('No token found');
@@ -340,8 +358,23 @@ const TutorDashboard = () => {
 
     //order
     const fetchOrders = async (tutorId, token) => {
+        // try {
+        //     //   const token = sessionStorage.getItem("jwtToken");
+        //     const response = await axios.get(
+        //         `http://localhost:3001/api/v1/order/tutororderdetails/${tutorId}`,
+        //         {},
+        //         {
+        //             headers: {
+        //                 Authorization: `Bearer ${token}`,
+        //             },
+        //         }
+        //     );
+        //     setOrders(response.data.orders || []);
+        // } catch (err) {
+        //     console.error("Failed to fetch orders", err);
+        //     setError("Failed to load orders.");
+        // }
         try {
-            //   const token = sessionStorage.getItem("jwtToken");
             const response = await axios.get(
                 `https://lms-backend-ufn7.onrender.com/api/v1/order/tutororderdetails/${tutorId}`,
                 {},
@@ -351,10 +384,16 @@ const TutorDashboard = () => {
                     },
                 }
             );
-            setOrders(response.data.orders || []);
-        } catch (err) {
-            console.error("Failed to fetch orders", err);
-            setError("Failed to load orders.");
+            // setOrders(response.data.orders || []);
+
+            if (response.data && response.data.length > 0) {
+                setOrders(response.data); // Assuming you have a state like `orders`
+            } else {
+                setOrders([]); // Set an empty array to avoid issues in rendering
+            }
+        } catch (error) {
+            console.error("Failed to fetch orders:", error);
+            setOrders([]); // Handle error by showing empty data
         }
     };
 
@@ -373,9 +412,9 @@ const TutorDashboard = () => {
         const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
         const year = date.getFullYear();
-      
+
         return `${day}-${month}-${year}`;
-      };
+    };
 
 
     return (
@@ -504,6 +543,7 @@ const TutorDashboard = () => {
             ) : (
                 <div>
                     <h2 className="text-2xl font-semibold mb-2 mt-5">Lessons Created by You</h2>
+
                     {lessons.length === 0 ? (
                         <p className="text-gray-700">You have not created any lessons yet.</p>
                     ) : (
@@ -684,9 +724,8 @@ const TutorDashboard = () => {
                 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow-lg p-6 w-[90%] md:w-[50%]">
                         <h2 className="text-2xl font-semibold mb-4">Tutor Orders</h2>
-                        {orders.length === 0 ? (
-                            <p className="text-gray-700">No orders found for this tutor.</p>
-                        ) : (
+
+                        {orders.length > 0 ? (
                             <table className="table-auto w-full border-collapse border border-gray-300">
                                 <thead>
                                     <tr>
@@ -711,14 +750,18 @@ const TutorDashboard = () => {
                                     ))}
                                 </tbody>
                             </table>
-
+                        ) : (
+                            <p className="text-gray-700">No orders found for this tutor.</p>
                         )}
+
                         {/* Display Total Earned */}
                         <div className="text-right mt-4">
                             <p className="text-lg font-semibold">
                                 Total Earned: <span className="text-green-600">₹{totalEarned}</span>
                             </p>
                         </div>
+
+                        {/* Close Button */}
                         <div className="flex justify-end mt-4">
                             <button
                                 onClick={closeOrderModal}
@@ -729,7 +772,12 @@ const TutorDashboard = () => {
                         </div>
                     </div>
                 </div>
-            )};
+            )}
+
+            {!orderModalVisible && orders.length === 0 && (
+                <p className="text-center text-gray-700 mt-4">No orders found.</p>
+            )}
+
 
 
         </div>
