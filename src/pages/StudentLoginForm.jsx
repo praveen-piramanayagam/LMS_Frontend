@@ -27,7 +27,7 @@ const StudentLoginForm = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3001/api/v1/auth/students/login',
+        'https://lms-backend-ufn7.onrender.com/api/v1/auth/students/login',
         formData
       );
 

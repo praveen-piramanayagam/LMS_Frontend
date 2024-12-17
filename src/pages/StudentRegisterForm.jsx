@@ -44,7 +44,7 @@ const StudentRegisterForm = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3001/api/v1/auth/students/register',
+        'https://lms-backend-ufn7.onrender.com/api/v1/auth/students/register',
         formData
       );
       setMessage('Registration successful!');

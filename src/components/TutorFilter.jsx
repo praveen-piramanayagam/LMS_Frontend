@@ -24,7 +24,7 @@ const TutorFilter = () => {
         setLoading(true);
         setError('');
         try {
-            const { data } = await axios.get('http://localhost:3001/api/v1/filtertutor/filter', { params: filter });
+            const { data } = await axios.get('https://lms-backend-ufn7.onrender.com/api/v1/filtertutor/filter', { params: filter });
             setTutors(data);
         } catch (err) {
             setError('Failed to fetch tutors');

@@ -15,7 +15,7 @@ const TutorLessons = () => {
     useEffect(() => {
         const fetchLessons = async () => {
             try {
-                const { data } = await axios.get(`http://localhost:3001/api/v1/lessons/tutor/getall/${tutorId}`);
+                const { data } = await axios.get(`https://lms-backend-ufn7.onrender.com/api/v1/lessons/tutor/getall/${tutorId}`);
                 setLessons(data);
                 if (data.length > 0) {
                     setTutorDetails(data[0].tutorId); // Assumes tutorId is in the lessons data
@@ -45,7 +45,7 @@ const TutorLessons = () => {
     const handlePayNow = async (lessonId) => {
         try {
             // Step 1: Create the order initially with 'pending' status
-            const response = await fetch("http://localhost:3001/api/v1/order/createorder", {
+            const response = await fetch("https://lms-backend-ufn7.onrender.com/api/v1/order/createorder", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -76,7 +76,7 @@ const TutorLessons = () => {
                     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
     
                     // Step 3: Verify the payment via the backend
-                    const verifyResponse = await fetch("http://localhost:3001/api/v1/orderverify/verifypayment", {
+                    const verifyResponse = await fetch("https://lms-backend-ufn7.onrender.com/api/v1/orderverify/verifypayment", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

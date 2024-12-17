@@ -20,7 +20,7 @@ const TutorLoginForm = () => {
     }
 
     try {
-        const response = await axios.post('http://localhost:3001/api/v1/auth/tutors/login', {
+        const response = await axios.post('https://lms-backend-ufn7.onrender.com/api/v1/auth/tutors/login', {
             email,
             password,
         });

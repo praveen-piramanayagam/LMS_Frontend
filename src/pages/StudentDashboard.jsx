@@ -61,7 +61,7 @@ const StudentDashboard = () => {
   const fetchStudentProfile = async (studentId) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/v1/profile/getstudent/${studentId}`);
+      const response = await fetch(`https://lms-backend-ufn7.onrender.com/api/v1/profile/getstudent/${studentId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch student profile');
       }
@@ -98,7 +98,7 @@ const StudentDashboard = () => {
     const studentId = editableProfile.studentId;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/v1/profile/updatestudent/${studentId}`, {
+      const response = await fetch(`https://lms-backend-ufn7.onrender.com/api/v1/profile/updatestudent/${studentId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ const StudentDashboard = () => {
         return;
       }
       const response = await fetch(
-        `http://localhost:3001/api/v1/order/studentsorderdetails/${studentId}`,
+        `https://lms-backend-ufn7.onrender.com/api/v1/order/studentsorderdetails/${studentId}`,
         {
           method: 'GET',
           headers: {

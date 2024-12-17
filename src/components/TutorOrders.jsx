@@ -45,7 +45,7 @@ const TutorOrders = () => {
                 console.log('Tutor ID:', tutorId); // Debugging log
 
                 const response = await axios.post(
-                    'http://localhost:3001/api/v1/order/tutororderdetails', // API endpoint
+                    'https://lms-backend-ufn7.onrender.com/api/v1/order/tutororderdetails', // API endpoint
                     { tutor_id: tutorId }, // Request body
                     {
                         headers: {

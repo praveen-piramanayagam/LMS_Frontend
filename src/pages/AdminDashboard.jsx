@@ -28,7 +28,7 @@ const AdminDashboard = () => {
 
       if (typeof adminId !== 'string') throw new Error('Unauthorized: Invalid token (adminId is not a string)');
 
-      const response = await axios.get(`http://localhost:3001/api/v1/profile/getadmin/${adminId}`, {
+      const response = await axios.get(`https://lms-backend-ufn7.onrender.com/api/v1/profile/getadmin/${adminId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAdminProfile(response.data);
@@ -52,10 +52,10 @@ const AdminDashboard = () => {
       }
 
       const [tutorsResponse, studentsResponse] = await Promise.all([
-        axios.get('http://localhost:3001/api/v1/profile/getalltutors', {
+        axios.get('https://lms-backend-ufn7.onrender.com/api/v1/profile/getalltutors', {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get('http://localhost:3001/api/v1/profile/getallstudents', {
+        axios.get('https://lms-backend-ufn7.onrender.com/api/v1/profile/getallstudents', {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -80,7 +80,7 @@ const AdminDashboard = () => {
         status: updatedStatus,
       };
 
-      await axios.put(`http://localhost:3001/api/v1/profile/deactivate${type}/${id}`,
+      await axios.put(`https://lms-backend-ufn7.onrender.com/api/v1/profile/deactivate${type}/${id}`,
         statusData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -109,7 +109,7 @@ const AdminDashboard = () => {
       if (!token) throw new Error('No authentication token found');
 
       const response = await axios.put(
-        `http://localhost:3001/api/v1/profile/updateadmin/${adminProfile.adminId}`,
+        `https://lms-backend-ufn7.onrender.com/api/v1/profile/updateadmin/${adminProfile.adminId}`,
         adminProfileEdit,
         { headers: { Authorization: `Bearer ${token}` } }
       );

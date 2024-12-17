@@ -86,7 +86,7 @@ const TutorDashboard = () => {
         setLoading(true);
         try {
             const response = await axios.get(
-                `http://localhost:3001/api/v1/lessons/getcreatedlessons/${tutorId}`,
+                `https://lms-backend-ufn7.onrender.com/api/v1/lessons/getcreatedlessons/${tutorId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -138,7 +138,7 @@ const TutorDashboard = () => {
 
         try {
             await axios.post(
-                'http://localhost:3001/api/v1/lessons/createlesson',
+                'https://lms-backend-ufn7.onrender.com/api/v1/lessons/createlesson',
                 {
                     tutorId: decoded.tutorId,
                     title: newLesson.title,
@@ -214,7 +214,7 @@ const TutorDashboard = () => {
             console.log('Updating lesson with data:', lessonToUpdate);
 
             const response = await axios.put(
-                `http://localhost:3001/api/v1/lessons/updatelesson/${lessonToUpdate.lesson_id}`,
+                `https://lms-backend-ufn7.onrender.com/api/v1/lessons/updatelesson/${lessonToUpdate.lesson_id}`,
                 {
                     title: lessonToUpdate.title,
                     description: lessonToUpdate.description,
@@ -266,7 +266,7 @@ const TutorDashboard = () => {
 
         try {
             await axios.delete(
-                `http://localhost:3001/api/v1/lessons/deletelesson/${lessonId}`,
+                `https://lms-backend-ufn7.onrender.com/api/v1/lessons/deletelesson/${lessonId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -285,7 +285,7 @@ const TutorDashboard = () => {
     const fetchTutorProfile = async (tutorId, token) => {
         try {
             const response = await axios.get(
-                `http://localhost:3001/api/v1/profile/gettutor/${tutorId}`,
+                `https://lms-backend-ufn7.onrender.com/api/v1/profile/gettutor/${tutorId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -318,7 +318,7 @@ const TutorDashboard = () => {
         const token = sessionStorage.getItem("sessionToken");
         try {
             const response = await axios.put(
-                `http://localhost:3001/api/v1/profile/updatetutor/${editableTutor.tutorId}`, // Use _id
+                `https://lms-backend-ufn7.onrender.com/api/v1/profile/updatetutor/${editableTutor.tutorId}`, // Use _id
                 editableTutor,
                 {
                     headers: {
@@ -343,7 +343,7 @@ const TutorDashboard = () => {
         try {
             //   const token = sessionStorage.getItem("jwtToken");
             const response = await axios.get(
-                `http://localhost:3001/api/v1/order/tutororderdetails/${tutorId}`,
+                `https://lms-backend-ufn7.onrender.com/api/v1/order/tutororderdetails/${tutorId}`,
                 {},
                 {
                     headers: {
