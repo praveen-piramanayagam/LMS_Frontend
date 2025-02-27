@@ -28,7 +28,7 @@ const Registerpage = () => {
         </div>
 
         {/* Admin Card */}
-        <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center text-center">
+        {/* <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center text-center">
           <div className="w-16 h-16 bg-purple-500 text-white flex items-center justify-center rounded-full mb-4">
             <span className="text-2xl font-bold">A</span>
           </div>
@@ -36,7 +36,19 @@ const Registerpage = () => {
           <Link to="/registeradmin" className="hover:text-gray-300"><button className="w-full px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition duration-200 font-semibold">
             Register
           </button></Link>
-        </div>
+        </div> */}
+        <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center text-center">
+  <div className="w-16 h-16 bg-purple-500 text-white flex items-center justify-center rounded-full mb-4">
+    <span className="text-2xl font-bold">A</span>
+  </div>
+  <h3 className="text-xl font-semibold text-gray-800 mb-4">Admin</h3>
+  
+  {/* Replace the button with plain text */}
+  <p className="text-gray-600 font-medium">Login admin with default</p>
+  <p className="text-gray-600 font-medium">"praveenadmin@gmail.com"</p>
+  <p className="text-gray-600 font-medium">"Praveen@18"</p>
+</div>
+
       </div>
 
       {/* Login Link */}

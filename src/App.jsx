@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Homepage from './pages/Homepage';
 import Registerpage from './pages/Registerpage';
 import Loginpage from './pages/Loginpage';
 import StudentRegisterForm from './pages/StudentRegisterForm';
@@ -14,7 +13,6 @@ import StudentDashboard from './pages/StudentDashboard';
 import TutorDashboard from './pages/TutorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import TutorsLesson from './pages/TutorsLesson';
-import CreateLessonForm from './components/CreateLessonForm';
 import TutorOrders from './components/TutorOrders';
 
 const App = () => {
@@ -36,8 +34,7 @@ const App = () => {
         <Route path="/admindashboard" element={<AdminDashboard />} />
         <Route path="/tutors/lessons/:tutorId" element={<TutorsLesson />} />
         <Route path='/tutor/orders' element={<TutorOrders/>}/>
-
-        </Routes>
+       </Routes>
     </BrowserRouter>
   );
 };
